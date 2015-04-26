@@ -33,6 +33,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,25 +43,26 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import srlookup.api.APIConstants;
+import srlookup.core.SRDict;
 
 /**
  * Main
  *
  * @author Vegard Løkken <vegard@loekken.org>
  */
-public class GUI extends JFrame implements
-        SuggestionsReceiver/*, DefinitionReceiver*/ {
-    private static final String VERSION = "0.1.0";
+public class GUI extends JFrame implements SuggestionsReceiver {
+    private static final String VERSION = "0.1.1";
 
     private String lastText;
 
     private JTextField input;
     private JList suggestionsList;
-    private final DefinitionBrowser definitionBrowser;
 
     private Fetcher apiThread;
 
     public GUI() {
+        super("SRLookup");
+        
         lastText = "";
         apiThread = null;
 
@@ -67,8 +70,6 @@ public class GUI extends JFrame implements
         KeyboardFocusManager manager =
                 KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new QuitOnEscape(this));
-
-        definitionBrowser = new DefinitionBrowser(this);
 
         setupGUI();
 
@@ -87,6 +88,7 @@ public class GUI extends JFrame implements
                 String text = input.getText();
                 onInputChanged(text);
             }
+
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -105,13 +107,10 @@ public class GUI extends JFrame implements
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     int index = suggestionsList.getSelectedIndex();
                     if (index >= 0) {
-                        String query =
-                                (String) suggestionsList.getModel().getElementAt(index);
+                        String query = (String) suggestionsList.getModel()
+                                .getElementAt(index);
 
-                        query = query.replaceAll("\\s\\([^\\)]+\\)", "");
-                        
-                        //fetchDefinition(query);
-                        browseDefinition(query);
+                        onListItemSelected(query);
                     }
                 }
             }
@@ -119,7 +118,8 @@ public class GUI extends JFrame implements
         JScrollPane scrollPane = new JScrollPane(suggestionsList);
 
         String creditsTxt = "SRLookup v%s Copyright © 2015 Vegard Løkken";
-        JLabel credits = new JLabel(String.format(creditsTxt, VERSION), SwingConstants.CENTER);
+        JLabel credits = new JLabel(String.format(creditsTxt, VERSION),
+                SwingConstants.CENTER);
         Font origFont = credits.getFont();
         credits.setFont(new Font(origFont.getName(), Font.ITALIC, 10));
 
@@ -142,6 +142,33 @@ public class GUI extends JFrame implements
         }
     }
 
+    private void onListItemSelected(String item) {
+
+        // Find word part and dictionary part
+        String regex = "(.+)\\s\\(([^\\)]+)\\)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(item);
+
+        if (matcher.find()) {
+            String word = matcher.group(1);
+            String dict = matcher.group(2);
+
+            SRDict dictionary;
+            switch (dict) {
+                case "bm":
+                    dictionary = SRDict.Bokmaal;
+                    break;
+                case "nn":
+                    dictionary = SRDict.Nynorsk;
+                    break;
+                default:
+                    dictionary = SRDict.Both;
+            }
+
+            browseDefinition(word, dictionary);
+        }
+    }
+
     private void fetchSuggestions(String query) {
         
         // Invalidate last thread
@@ -161,25 +188,18 @@ public class GUI extends JFrame implements
 
         suggestionsList.setModel(listModel);
     }
-/*
-    private void fetchDefinition(String query) {
 
-        // Invalidate last thread
-        if (apiThread != null && !apiThread.isDone())
-            apiThread.setInvalid(true);
-
-        apiThread = new DefinitionFetcher(query, this);
-        apiThread.start();
-    }
-*/
-    private void browseDefinition(String query) {
+    private void browseDefinition(String query, SRDict dict) {
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
 
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 try {
                     String encoded = URLEncoder.encode(query, "UTF-8");
-                    URI uri = new URI(APIConstants.DEFINITION_URL + "?OPP=" + encoded);
+
+                    URI uri = new URI(APIConstants.DEFINITION_URL +
+                            "?OPP=" + encoded + "&" + dict + "=+");
+
                     desktop.browse(uri);
                     closeApplication();
                 }
@@ -199,11 +219,5 @@ public class GUI extends JFrame implements
     public void receiveSuggestions(String[] suggestions) {
         setSuggestions(suggestions);
     }
-/*
-    @Override
-    public void receiveDefinition(Definition definition) {
-        definitionBrowser.setDefinition(definition);
-        definitionBrowser.open();
-    }
-*/
+
 }

@@ -26,10 +26,6 @@ package srlookup.core;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * Parser
@@ -47,31 +43,5 @@ public class Parser {
         }
 
         return suggestions;
-    }
-
-    public static Definition parseDefinitionHtml(String definitionHtml) {
-        Document doc = Jsoup.parse(definitionHtml);
-
-        doc.select(".oppsgramordklasse").remove();
-        doc.select(".oppsgramordklassevindu").remove();
-
-        Elements bokmaalSection = doc.select("#kolonnebm"),
-                nynorskSection = doc.select("#kolonnenn");
-
-        Elements bokmaalArticles = bokmaalSection.select(".artikkel"),
-                nynorskArticles = nynorskSection.select(".artikkel");
-
-        StringBuilder bokmaal = new StringBuilder(),
-                nynorsk = new StringBuilder();
-
-        for (Element el : bokmaalArticles) {
-            bokmaal.append(el.select(".artikkelinnhold").toString());
-        }
-
-        for (Element el : nynorskArticles) {
-            nynorsk.append(el.select(".artikkelinnhold").toString());
-        }
-
-        return new Definition(bokmaal.toString(), nynorsk.toString());
     }
 }

@@ -47,10 +47,5 @@ public class Program {
                 System.out.println(suggestion);
             }
         }
-
-        /*
-        Definition definition = Services.getDefinition("entre");
-        System.out.println(definition.getBokmaal());
-        */
     }
 }

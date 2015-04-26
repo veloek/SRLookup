@@ -33,6 +33,7 @@ import srlookup.api.SRFetcher;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class Services {
+
     public static String[] getSuggestions(SRDict dict, String query) {
         String jsonString = SRFetcher.getSuggestionsJson(dict, query);
 
@@ -41,11 +42,4 @@ public class Services {
         return suggestions;
     }
 
-    public static Definition getDefinition(String word) {
-        String html = SRFetcher.getDefinitionHtml(word);
-
-        Definition definition = Parser.parseDefinitionHtml(html);
-        
-        return definition;
-    }
 }
