@@ -6,7 +6,7 @@ Simple tool to lookup norwegian words in the dictionary used at sprakrad.no.
 Build
 -----
 
-To build the jar make sure you have ant installed and then run: `$ ant -f build.xml jar`.
+To build the jar make sure you have ant installed and then run `ant -f build.xml jar`.
 
 Run
 ---
