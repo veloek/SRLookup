@@ -30,7 +30,6 @@ import java.awt.Font;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -201,18 +200,12 @@ public class GUI extends JFrame implements SuggestionsReceiver {
                             "?OPP=" + encoded + "&" + dict + "=+");
 
                     desktop.browse(uri);
-                    closeApplication();
                 }
                 catch(Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
-    }
-
-    private void closeApplication() {
-        this.dispatchEvent(new WindowEvent(this,
-                    WindowEvent.WINDOW_CLOSING));
     }
 
     @Override
