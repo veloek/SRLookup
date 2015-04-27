@@ -51,7 +51,7 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.1";
+    private static final String VERSION = "0.1.2";
 
     private String lastText;
 
@@ -95,7 +95,9 @@ public class GUI extends JFrame implements SuggestionsReceiver {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                int code = e.getKeyCode();
+
+                if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_DOWN) {
                     if (suggestionsList.getModel().getSize() > 0) {
                         suggestionsList.requestFocus();
                         suggestionsList.setSelectedIndex(0);
