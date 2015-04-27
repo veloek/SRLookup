@@ -25,6 +25,7 @@
 package srlookup.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.KeyboardFocusManager;
@@ -34,12 +35,12 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import srlookup.api.APIConstants;
 import srlookup.core.SRDict;
@@ -54,7 +55,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
 
     private String lastText;
 
-    private JTextField input;
+    private ExtTextField input;
     private JList suggestionsList;
 
     private Fetcher apiThread;
@@ -77,10 +78,14 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void setupGUI() {
+        
+        // Frameless with a custom border
         setUndecorated(true);
+        Color SRColor = new Color(243, 167, 0); // sprakrad.no color
+        getRootPane().setBorder(BorderFactory.createLineBorder(SRColor, 2));
 
-        input = new JTextField();
-        input.setEditable(true);
+        input = new ExtTextField();
+        input.setPlaceholder("Search...");
         input.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
