@@ -31,6 +31,8 @@ import java.awt.Font;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -51,7 +53,7 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.2";
+    private static final String VERSION = "0.1.3";
 
     private String lastText;
 
@@ -112,12 +114,21 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     int index = suggestionsList.getSelectedIndex();
-                    if (index >= 0) {
-                        String query = (String) suggestionsList.getModel()
-                                .getElementAt(index);
-
-                        onListItemSelected(query);
-                    }
+                    
+                    if (index >= 0)
+                        onListItemSelected(index);
+                }
+            }
+        });
+        suggestionsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList)evt.getSource();
+                if (evt.getClickCount() == 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    
+                    if (index >= 0)
+                        onListItemSelected(index);
                 }
             }
         });
@@ -148,7 +159,9 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         }
     }
 
-    private void onListItemSelected(String item) {
+    private void onListItemSelected(int index) {
+        
+        String item = (String)suggestionsList.getModel().getElementAt(index);
 
         // Find word part and dictionary part
         String regex = "(.+)\\s\\(([^\\)]+)\\)";
