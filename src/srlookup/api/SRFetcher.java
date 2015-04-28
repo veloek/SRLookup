@@ -43,7 +43,7 @@ public class SRFetcher {
 
         try {
             String encoded = URLEncoder.encode(query, "UTF-8");
-            URL url = new URL(APIConstants.SUGGESTIONS_URL + "?spr=" + dict + "&query=" + query);
+            URL url = new URL(APIConstants.SUGGESTIONS_URL + "?spr=" + dict + "&query=" + encoded);
 
             json = getResponse(url, "ISO-8859-1");
         } catch (Exception ex) {
