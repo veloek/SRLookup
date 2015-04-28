@@ -33,6 +33,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -186,6 +187,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             }
 
             browseDefinition(word, dictionary);
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
     }
 
