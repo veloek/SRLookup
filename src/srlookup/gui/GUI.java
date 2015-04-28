@@ -44,8 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 import srlookup.api.APIConstants;
 import srlookup.core.SRDict;
 
@@ -55,7 +53,7 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.4";
+    private static final String VERSION = "0.1.5";
 
     private String lastText;
 
