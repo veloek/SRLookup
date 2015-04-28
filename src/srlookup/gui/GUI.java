@@ -25,8 +25,8 @@
 package srlookup.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
@@ -37,13 +37,14 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import srlookup.api.APIConstants;
 import srlookup.core.SRDict;
 
@@ -53,12 +54,14 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.3";
+    private static final String VERSION = "0.1.4";
 
     private String lastText;
 
     private ExtTextField input;
     private JList suggestionsList;
+    private JScrollPane scrollPane;
+    private JLabel credits;
 
     private Fetcher apiThread;
 
@@ -83,15 +86,15 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         
         // Frameless with a custom border
         setUndecorated(true);
-        Color SRColor = new Color(243, 167, 0); // sprakrad.no color
-        getRootPane().setBorder(BorderFactory.createLineBorder(SRColor, 2));
 
         input = new ExtTextField();
-        input.setPlaceholder("Search...");
+        input.setPlaceholder("Søk...");
+        input.setFont(new Font(null, Font.PLAIN, 32));
+        input.setPreferredSize(new Dimension(300, 50));
         input.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                String text = input.getText();
+                String text = input.getText().toLowerCase();
                 onInputChanged(text);
             }
 
@@ -132,17 +135,15 @@ public class GUI extends JFrame implements SuggestionsReceiver {
                 }
             }
         });
-        JScrollPane scrollPane = new JScrollPane(suggestionsList);
+        scrollPane = new JScrollPane(suggestionsList);
 
         String creditsTxt = "SRLookup v%s Copyright © 2015 Vegard Løkken";
-        JLabel credits = new JLabel(String.format(creditsTxt, VERSION),
+        credits = new JLabel(String.format(creditsTxt, VERSION),
                 SwingConstants.CENTER);
-        Font origFont = credits.getFont();
-        credits.setFont(new Font(origFont.getName(), Font.ITALIC, 10));
+        credits.setFont(new Font(null, Font.ITALIC, 9));        
+        credits.setBorder(input.getBorder());
 
         add(input, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-        add(credits, BorderLayout.SOUTH);
         
         pack();
         setLocationRelativeTo(null);
@@ -150,7 +151,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
 
     private void onInputChanged(String newText) {
         if (!newText.equals(lastText)) {
-            if (newText.length() > 2)
+            if (newText.length() >= 2)
                 fetchSuggestions(newText);
             else
                 setSuggestions(new String[0]);
@@ -199,13 +200,23 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void setSuggestions(String[] suggestions) {
-        DefaultListModel listModel = new DefaultListModel();
+        if (suggestions.length > 0) {
+            DefaultListModel listModel = new DefaultListModel();
 
-        for (String suggestion : suggestions) {
-            listModel.addElement(suggestion);
+            for (String suggestion : suggestions) {
+                listModel.addElement(suggestion);
+            }
+
+            suggestionsList.setModel(listModel);
+            
+            add(scrollPane, BorderLayout.CENTER);
+            add(credits, BorderLayout.SOUTH);
+            pack();
+        } else {
+            remove(scrollPane);
+            remove(credits);
+            pack();
         }
-
-        suggestionsList.setModel(listModel);
     }
 
     private void browseDefinition(String query, SRDict dict) {

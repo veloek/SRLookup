@@ -53,21 +53,6 @@ public class SRFetcher {
         }
     }
 
-    public static String getDefinitionHtml(String word) {
-        String html = null;
-
-        try {
-            String encoded = URLEncoder.encode(word, "UTF-8");
-            URL url = new URL(APIConstants.DEFINITION_URL + "?OPP=" + encoded);
-
-            html = getResponse(url, "UTF-8");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            return html;
-        }
-    }
-
     private static String getResponse(URL url, String encoding) throws Exception {
         InputStream is = url.openStream();
 

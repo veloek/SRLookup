@@ -75,9 +75,7 @@ public class ExtTextField extends JTextField implements KeyListener, CaretListen
     
     private void setupTextField() {
         placeholder = null;
-        selectionColor = getSelectionColor();
-        textColor = getForeground();
-
+        
         addKeyListener(this);
         addCaretListener(this);
     }
@@ -94,6 +92,9 @@ public class ExtTextField extends JTextField implements KeyListener, CaretListen
     }
     
     private void showPlaceholder() {
+        selectionColor = getSelectionColor();
+        textColor = getForeground();
+        
         setText(getPlaceholder());
         setCaretPosition(0);
         setSelectionColor(new Color(1, 1, 1, 0));
