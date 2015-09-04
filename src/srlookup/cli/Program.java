@@ -24,6 +24,7 @@
 
 package srlookup.cli;
 
+import javax.swing.SwingUtilities;
 import srlookup.core.SRDict;
 import srlookup.core.Services;
 import srlookup.gui.GUI;
@@ -37,7 +38,13 @@ public class Program {
     public static void main(String[] args) {
 
         if (args.length == 0) {
-            new GUI();
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					new GUI();
+				}
+			});
         } else {
             String query = args[0];
 
