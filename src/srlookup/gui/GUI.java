@@ -53,7 +53,7 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.6";
+    private static final String VERSION = "0.1.7";
 
     private String lastText;
 

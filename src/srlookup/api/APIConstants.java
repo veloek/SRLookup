@@ -31,8 +31,8 @@ package srlookup.api;
  */
 public class APIConstants {
     public static final String SUGGESTIONS_URL =
-            "http://nob-ordbok.uio.no/perl/lage_ordliste_liten_nr2000.cgi";
+            "http://ordbok.uib.no/perl/lage_ordliste_liten_nr2000.cgi";
 
     public static final String DEFINITION_URL =
-            "http://www.nob-ordbok.uio.no/perl/ordbok.cgi";
+            "http://ordbok.uib.no/perl/ordbok.cgi";
 }
