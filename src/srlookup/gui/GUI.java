@@ -25,7 +25,6 @@
 package srlookup.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.KeyboardFocusManager;
@@ -34,6 +33,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -53,7 +53,7 @@ import srlookup.core.SRDict;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class GUI extends JFrame implements SuggestionsReceiver {
-    private static final String VERSION = "0.1.7";
+    private static final String VERSION = "0.1.8";
 
     private String lastText;
 
@@ -66,7 +66,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
 
     public GUI() {
         super("SRLookup");
-        
+
         lastText = "";
         apiThread = null;
 
@@ -82,7 +82,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void setupGUI() {
-        
+
         // Frameless with a custom border
         setUndecorated(true);
 
@@ -116,7 +116,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     int index = suggestionsList.getSelectedIndex();
-                    
+
                     if (index >= 0)
                         onListItemSelected(index);
                 }
@@ -128,7 +128,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
                 JList list = (JList)evt.getSource();
                 if (evt.getClickCount() == 2) {
                     int index = list.locationToIndex(evt.getPoint());
-                    
+
                     if (index >= 0)
                         onListItemSelected(index);
                 }
@@ -139,11 +139,11 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         String creditsTxt = "SRLookup v%s Copyright © 2015 Vegard Løkken";
         credits = new JLabel(String.format(creditsTxt, VERSION),
                 SwingConstants.CENTER);
-        credits.setFont(new Font(null, Font.ITALIC, 9));        
+        credits.setFont(new Font(null, Font.ITALIC, 9));
         credits.setBorder(input.getBorder());
 
         add(input, BorderLayout.NORTH);
-        
+
         pack();
         setLocationRelativeTo(null);
     }
@@ -160,7 +160,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void onListItemSelected(int index) {
-        
+
         String item = (String)suggestionsList.getModel().getElementAt(index);
 
         // Find word part and dictionary part
@@ -190,7 +190,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void fetchSuggestions(String query) {
-        
+
         // Invalidate last thread
         if (apiThread != null && !apiThread.isDone())
             apiThread.setInvalid(true);
@@ -208,7 +208,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             }
 
             suggestionsList.setModel(listModel);
-            
+
             add(scrollPane, BorderLayout.CENTER);
             add(credits, BorderLayout.SOUTH);
             pack();
@@ -220,23 +220,21 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     private void browseDefinition(String query, SRDict dict) {
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-
-            if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                try {
-                    String encoded = URLEncoder.encode(query, "UTF-8");
-
-                    URI uri = new URI(APIConstants.DEFINITION_URL +
-                            "?OPP=" + encoded + "&" + dict + "=+");
-
-                    desktop.browse(uri);
-                }
-                catch(Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
+        String encodedQuery;
+        try {
+            encodedQuery = URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Caught exception while encoding query: " +
+                    e.getMessage());
+            return;
         }
+
+        String url = String.format("%s?OPP=%s&%s=+",
+                APIConstants.DEFINITION_URL,
+                encodedQuery,
+                dict);
+
+          Browser.open(url);
     }
 
     @Override
