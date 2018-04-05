@@ -38,13 +38,13 @@ public class Program {
     public static void main(String[] args) {
 
         if (args.length == 0) {
-			SwingUtilities.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable() {
 
-				@Override
-				public void run() {
-					new GUI();
-				}
-			});
+                @Override
+                public void run() {
+                    new GUI();
+                }
+            });
         } else {
             String query = args[0];
 

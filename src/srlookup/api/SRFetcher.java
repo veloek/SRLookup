@@ -24,9 +24,9 @@
 
 package srlookup.api;
 
-import java.io.InputStream;
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import srlookup.core.SRDict;
@@ -54,17 +54,39 @@ public class SRFetcher {
     }
 
     private static String getResponse(URL url, String encoding) throws Exception {
-        InputStream is = url.openStream();
+        HttpURLConnection conn = openConnection(url, true);
 
-        Reader reader = new InputStreamReader(is, encoding);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(conn.getInputStream(), encoding));
+
+        String inputLine;
         StringBuilder sb = new StringBuilder();
 
-        int length;
-        char[] buffer = new char[4096];
-        while ((length = reader.read(buffer, 0, buffer.length)) > 0) {
-            sb.append(buffer, 0, length);
+        while ((inputLine = in.readLine()) != null) {
+            sb.append(inputLine);
         }
+        in.close();
 
         return sb.toString();
+    }
+
+    private static HttpURLConnection openConnection(URL url, boolean followRedirect) throws Exception {
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setReadTimeout(5000);
+        conn.addRequestProperty("Accept", "application/json");
+        conn.addRequestProperty("User-Agent", "SRLookup v" + srlookup.gui.GUI.VERSION);
+
+        int status = conn.getResponseCode();
+        switch (status) {
+            case HttpURLConnection.HTTP_OK:
+                return conn;
+            case HttpURLConnection.HTTP_MOVED_TEMP:
+            case HttpURLConnection.HTTP_MOVED_PERM:
+            case HttpURLConnection.HTTP_SEE_OTHER:
+                System.out.println("Following: " + conn.getHeaderField("Location"));
+                return followRedirect ? openConnection(new URL(conn.getHeaderField("Location")), followRedirect) : conn;
+            default:
+                throw new Exception(String.format("Error while fetching %s: %d %s", url.toString(), status, conn.getResponseMessage()));
+        }
     }
 }
