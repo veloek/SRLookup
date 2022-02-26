@@ -26,6 +26,7 @@ package srlookup.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
@@ -34,16 +35,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+
 import srlookup.api.APIConstants;
 import srlookup.core.SRDict;
 
@@ -60,7 +62,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     private ExtTextField input;
     private JList suggestionsList;
     private JScrollPane scrollPane;
-    private JLabel credits;
+    private JPanel credits;
 
     private Fetcher apiThread;
 
@@ -136,11 +138,19 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         });
         scrollPane = new JScrollPane(suggestionsList);
 
-        String creditsTxt = "SRLookup v%s Copyright © 2015 Vegard Løkken";
-        credits = new JLabel(String.format(creditsTxt, VERSION),
-                SwingConstants.CENTER);
-        credits.setFont(new Font(null, Font.ITALIC, 9));
-        credits.setBorder(input.getBorder());
+        String creditsTxt = "SRLookup v%s Credit: Språkrådet / UiB";
+        JLabel creditsLabel = new JLabel(String.format(creditsTxt, VERSION));
+        creditsLabel.setFont(new Font(null, Font.PLAIN, 9));
+
+        String creditsLinkTxt = "ordbokene.no";
+        String creditsLinkUrl = "https://ordbokene.no/";
+        String creditsLinkTooltip = "Visit Ordbøkene.no";
+        JLabel creditsLink = new HyperlinkLabel(creditsLinkTxt, creditsLinkUrl, creditsLinkTooltip);
+        creditsLink.setFont(new Font(null, Font.ITALIC, 9));
+
+        credits = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        credits.add(creditsLabel);
+        credits.add(creditsLink);
 
         add(input, BorderLayout.NORTH);
 
