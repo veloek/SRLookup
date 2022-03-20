@@ -29,6 +29,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import srlookup.core.SRDict;
 
 /**
@@ -55,6 +58,14 @@ public class SRFetcher {
 
     private static String getResponse(URL url, String encoding) throws Exception {
         HttpURLConnection conn = openConnection(url, true);
+
+        Optional<String> contentType = getResponseHeader(conn, "Content-Type");
+        if (contentType.isPresent()) {
+            Optional<String> charset = parseCharset(contentType.get());
+            if (charset.isPresent()) {
+                encoding = charset.get();
+            }
+        }
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(conn.getInputStream(), encoding));
@@ -88,5 +99,24 @@ public class SRFetcher {
             default:
                 throw new Exception(String.format("Error while fetching %s: %d %s", url.toString(), status, conn.getResponseMessage()));
         }
+    }
+
+    private static Optional<String> getResponseHeader(HttpURLConnection connection, String header) {
+        Optional<String> value = connection.getHeaderFields().entrySet().stream()
+            .filter(h -> h.getKey() != null && h.getKey().toLowerCase().equals(header.toLowerCase()))
+            .map(h -> String.join(", ", h.getValue()))
+            .findFirst();
+
+        return value;
+    }
+
+    private static Optional<String> parseCharset(String contentType) {
+        Pattern p = Pattern.compile("charset=([a-zA-Z0-9-]+)");
+        Matcher m = p.matcher(contentType);
+        Optional<String> charset = Optional.empty();
+        if (m.find()) {
+            charset = Optional.of(m.group(1));
+        }
+        return charset;
     }
 }
