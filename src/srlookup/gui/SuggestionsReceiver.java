@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,13 @@
 
 package srlookup.gui;
 
+import srlookup.api.Suggestion;
+
 /**
  * SuggestionsReceiver
  *
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public interface SuggestionsReceiver {
-    void receiveSuggestions(String[] suggestions);
+    void receiveSuggestions(Suggestion[] suggestions);
 }

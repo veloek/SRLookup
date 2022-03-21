@@ -24,8 +24,12 @@
 
 package srlookup.core;
 
+import java.text.ParseException;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import srlookup.api.Suggestion;
 
 /**
  * Parser
@@ -33,7 +37,7 @@ import org.json.JSONObject;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class Parser {
-    public static String[] parseSuggestionsJson(String suggestionsJson) {
+    public static Suggestion[] parseSuggestionsJson(String suggestionsJson) {
         JSONObject json = new JSONObject(suggestionsJson);
         JSONObject answer = json.getJSONObject("a");
         JSONArray exact = answer.optJSONArray("exact");
@@ -42,21 +46,26 @@ public class Parser {
             return new Suggestion[0];
         }
 
-        String[] suggestions = new String[exact.length()];
+        Suggestion[] suggestions = new Suggestion[exact.length()];
         for (int i=0; i<exact.length(); i++) {
             JSONArray e = exact.getJSONArray(i);
 
             String word = e.getString(0);
-
             JSONArray d = e.getJSONArray(1);
-            String[] dict = new String[d.length()];
 
+            String[] dicts = new String[d.length()];
             for (int j=0; j<d.length(); j++) {
-                dict[j] = d.getString(j);
+                dicts[j] = d.getString(j);
             }
 
-            String suggestion = word + " (" + String.join(", ", dict) + ")";
-            suggestions[i] = suggestion;
+            try {
+                SRDict dict = SRDict.parse(String.join(",", dicts));
+
+                Suggestion suggestion = new Suggestion(word, dict);
+                suggestions[i] = suggestion;
+            } catch (ParseException ex) {
+                System.err.println("Error parsing suggestion (" + word + "): " + ex.getMessage());
+            }
         }
 
         return suggestions;

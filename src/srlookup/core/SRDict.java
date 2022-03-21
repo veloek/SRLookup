@@ -24,6 +24,8 @@
 
 package srlookup.core;
 
+import java.text.ParseException;
+
 /**
  * SRDict
  *
@@ -37,6 +39,19 @@ public enum SRDict {
     private final String strval;
     SRDict(String strval) {
         this.strval = strval;
+    }
+
+    public static SRDict parse(String str) throws ParseException {
+        switch (str) {
+            case "bm":
+                return SRDict.Bokmaal;
+            case "nn":
+                return SRDict.Nynorsk;
+            case "bm,nn":
+                return SRDict.Both;
+            default:
+                throw new ParseException("Unknown dictionary: " + str, 0);
+        }
     }
 
     @Override

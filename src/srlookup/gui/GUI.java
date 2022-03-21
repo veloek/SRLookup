@@ -47,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import srlookup.api.APIConstants;
+import srlookup.api.Suggestion;
 import srlookup.core.SRDict;
 
 /**
@@ -60,7 +61,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     private String lastText;
 
     private ExtTextField input;
-    private JList suggestionsList;
+    private JList<Suggestion> suggestionsList;
     private JScrollPane scrollPane;
     private JPanel credits;
 
@@ -112,7 +113,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             }
         });
 
-        suggestionsList = new JList();
+        suggestionsList = new JList<Suggestion>();
         suggestionsList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -163,7 +164,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             if (newText.length() >= 2)
                 fetchSuggestions(newText);
             else
-                setSuggestions(new String[0]);
+                setSuggestions(new Suggestion[0]);
 
             lastText = newText;
         }
@@ -171,32 +172,12 @@ public class GUI extends JFrame implements SuggestionsReceiver {
 
     private void onListItemSelected(int index) {
 
-        String item = (String)suggestionsList.getModel().getElementAt(index);
+        Suggestion item = (Suggestion)suggestionsList.getModel().getElementAt(index);
+        String word = item.getWord();
+        SRDict dictionary = item.getDict();
 
-        // Find word part and dictionary part
-        String regex = "(.+)\\s\\(([^\\)]+)\\)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(item);
-
-        if (matcher.find()) {
-            String word = matcher.group(1);
-            String dict = matcher.group(2);
-
-            SRDict dictionary;
-            switch (dict) {
-                case "bm":
-                    dictionary = SRDict.Bokmaal;
-                    break;
-                case "nn":
-                    dictionary = SRDict.Nynorsk;
-                    break;
-                default:
-                    dictionary = SRDict.Both;
-            }
-
-            browseDefinition(word, dictionary);
-            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        }
+        browseDefinition(word, dictionary);
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void fetchSuggestions(String query) {
@@ -209,11 +190,11 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         apiThread.start();
     }
 
-    private void setSuggestions(String[] suggestions) {
+    private void setSuggestions(Suggestion[] suggestions) {
         if (suggestions.length > 0) {
-            DefaultListModel listModel = new DefaultListModel();
+            DefaultListModel<Suggestion> listModel = new DefaultListModel<Suggestion>();
 
-            for (String suggestion : suggestions) {
+            for (Suggestion suggestion : suggestions) {
                 listModel.addElement(suggestion);
             }
 
@@ -248,7 +229,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     }
 
     @Override
-    public void receiveSuggestions(String[] suggestions) {
+    public void receiveSuggestions(Suggestion[] suggestions) {
         setSuggestions(suggestions);
     }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015-2022 Vegard Løkken
+ * Copyright 2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,42 @@
  * THE SOFTWARE.
  */
 
-package srlookup.core;
+package srlookup.api;
 
-import java.util.Arrays;
-
-import srlookup.api.SRFetcher;
-import srlookup.api.Suggestion;
+import srlookup.core.SRDict;
 
 /**
- * Services
+ * Suggestion
  *
  * @author Vegard Løkken <vegard@loekken.org>
  */
-public class Services {
+public class Suggestion {
+    private String word;
+    private SRDict dict;
 
-    public static Suggestion[] getSuggestions(SRDict dict, String query) {
-        String jsonString = SRFetcher.getSuggestionsJson(dict, query);
-
-        Suggestion[] suggestions = Parser.parseSuggestionsJson(jsonString);
-
-        return suggestions;
+    public Suggestion(String word, SRDict dict) {
+        this.word = word;
+        this.dict = dict;
     }
 
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public SRDict getDict() {
+        return dict;
+    }
+
+    public void setDict(SRDict dict) {
+        this.dict = dict;
+    }
+
+    @Override
+    public String toString() {
+        return word + " (" + dict + ")";
+    }
 }
