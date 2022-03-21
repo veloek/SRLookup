@@ -36,7 +36,11 @@ public class Parser {
     public static String[] parseSuggestionsJson(String suggestionsJson) {
         JSONObject json = new JSONObject(suggestionsJson);
         JSONObject answer = json.getJSONObject("a");
-        JSONArray exact = answer.getJSONArray("exact");
+        JSONArray exact = answer.optJSONArray("exact");
+
+        if (exact == null) {
+            return new Suggestion[0];
+        }
 
         String[] suggestions = new String[exact.length()];
         for (int i=0; i<exact.length(); i++) {
