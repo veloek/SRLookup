@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,8 @@ package srlookup.api;
  */
 public class APIConstants {
     public static final String SUGGESTIONS_URL =
-            "https://ordbok.uib.no/perl/lage_ordliste_liten_nr2000.cgi";
+            "https://ord.uib.no/api/suggest";
 
     public static final String DEFINITION_URL =
-            "https://ordbok.uib.no/perl/ordbok.cgi";
+            "https://ordbokene.no";
 }

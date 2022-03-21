@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@ package srlookup.core;
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public enum SRDict {
-    Both ("begge"),
-    Bokmaal ("bokmaal"),
-    Nynorsk ("nynorsk");
+    Both ("bm,nn"),
+    Bokmaal ("bm"),
+    Nynorsk ("nn");
 
     private final String strval;
     SRDict(String strval) {

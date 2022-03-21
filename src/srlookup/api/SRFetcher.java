@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,12 @@ public class SRFetcher {
 
         try {
             String encoded = URLEncoder.encode(query, "UTF-8");
-            URL url = new URL(APIConstants.SUGGESTIONS_URL + "?spr=" + dict + "&query=" + encoded);
 
-            json = getResponse(url, "ISO-8859-1");
+            String[] params = new String[] { "include=e", "dict=" + dict, "q=" + encoded };
+
+            URL url = new URL(APIConstants.SUGGESTIONS_URL + "?" + String.join("&", params));
+
+            json = getResponse(url, "utf-8");
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {

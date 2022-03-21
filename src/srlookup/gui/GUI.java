@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -239,10 +239,10 @@ public class GUI extends JFrame implements SuggestionsReceiver {
             return;
         }
 
-        String url = String.format("%s?OPP=%s&%s=+",
+        String url = String.format("%s/%s/%s",
                 APIConstants.DEFINITION_URL,
-                encodedQuery,
-                dict);
+                dict,
+                encodedQuery);
 
           Browser.open(url);
     }
