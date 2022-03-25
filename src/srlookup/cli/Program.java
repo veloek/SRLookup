@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Vegard Løkken
+ * Copyright 2015-2022 Vegard Løkken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 package srlookup.cli;
 
 import javax.swing.SwingUtilities;
+
+import srlookup.api.Suggestion;
 import srlookup.core.SRDict;
 import srlookup.core.Services;
 import srlookup.gui.GUI;
@@ -48,9 +50,9 @@ public class Program {
         } else {
             String query = args[0];
 
-            String[] suggestions = Services.getSuggestions(SRDict.Both, query);
+            Suggestion[] suggestions = Services.getSuggestions(SRDict.Both, query);
 
-            for (String suggestion : suggestions) {
+            for (Suggestion suggestion : suggestions) {
                 System.out.println(suggestion);
             }
         }
