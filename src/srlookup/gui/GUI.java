@@ -213,7 +213,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
     private void browseDefinition(String query, SRDict dict) {
         String encodedQuery;
         try {
-            encodedQuery = URLEncoder.encode(query, "UTF-8");
+            encodedQuery = URLEncoder.encode(query, "UTF-8").replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
             System.err.println("Caught exception while encoding query: " +
                     e.getMessage());
