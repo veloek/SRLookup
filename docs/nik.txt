@@ -1,0 +1,17 @@
+# Building AOT macOS executable with BellSoft NIK 22:
+
+## 1. Download NIK
+
+https://bell-sw.com/pages/downloads/native-image-kit/#/nik-22-17
+
+## 2. Set env variables
+
+export PATH=/Library/Java/JavaVirtualMachines/bellsoft-liberica-vm-core-openjdk17-22.2.0/Contents/Home/bin:$PATH
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/bellsoft-liberica-vm-core-openjdk17-22.2.0/Contents/Home
+
+## 3. Configure and build native image
+
+NB! Test all features when building config!
+
+java -agentlib:native-image-agent=config-output-dir=config -jar dist/SRLookup.jar
+native-image --no-fallback --enable-url-protocols=https -H:ConfigurationFileDirectories=config -Djava.awt.headless=false -J-Xmx7G -jar dist/SRLookup.jar SRLookup
