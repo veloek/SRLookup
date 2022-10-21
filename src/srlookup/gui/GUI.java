@@ -36,8 +36,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -128,7 +126,7 @@ public class GUI extends JFrame implements SuggestionsReceiver {
         suggestionsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                JList list = (JList)evt.getSource();
+                JList<?> list = (JList<?>)evt.getSource();
                 if (evt.getClickCount() == 2) {
                     int index = list.locationToIndex(evt.getPoint());
 

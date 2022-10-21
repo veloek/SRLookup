@@ -24,7 +24,6 @@
 package srlookup.gui;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JTextField;

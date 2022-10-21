@@ -54,9 +54,9 @@ public class SRFetcher {
             json = getResponse(url, "utf-8");
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            return json;
         }
+
+        return json;
     }
 
     private static String getResponse(URL url, String encoding) throws Exception {

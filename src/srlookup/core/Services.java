@@ -24,8 +24,6 @@
 
 package srlookup.core;
 
-import java.util.Arrays;
-
 import srlookup.api.SRFetcher;
 import srlookup.api.Suggestion;
 

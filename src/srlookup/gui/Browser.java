@@ -72,10 +72,10 @@ class Browser {
         try {
             switch (os) {
                 case WINDOWS:
-                    rt.exec("rundll32 url.dll,FileProtocolHandler " + url);
+                    rt.exec(new String[] { "rundll32", "url.dll,FileProtocolHandler", url });
                     break;
                 case MAC:
-                    rt.exec("open " + url);
+                    rt.exec(new String[] { "open", url });
                     break;
                 case LINUX:
                     String separator = String.format(" \"%s\" || ", url);
