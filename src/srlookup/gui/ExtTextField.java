@@ -34,16 +34,17 @@ import javax.swing.text.Document;
 
 /**
  * ExtTextField
- * 
+ *
  * Extended JTextField
- * 
+ *
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public class ExtTextField extends JTextField implements KeyListener, CaretListener {
-    
+
     private String placeholder;
     private Color selectionColor;
     private Color textColor;
+    private boolean isShowingPlaceholder;
 
     public ExtTextField() {
         setupTextField();
@@ -72,10 +73,10 @@ public class ExtTextField extends JTextField implements KeyListener, CaretListen
 
         setupTextField();
     }
-    
+
     private void setupTextField() {
         placeholder = null;
-        
+
         addKeyListener(this);
         addCaretListener(this);
     }
@@ -90,32 +91,41 @@ public class ExtTextField extends JTextField implements KeyListener, CaretListen
         if (getText().isEmpty())
             showPlaceholder();
     }
-    
+
     private void showPlaceholder() {
+        if (isShowingPlaceholder)
+            return;
+
         selectionColor = getSelectionColor();
         textColor = getForeground();
-        
+        isShowingPlaceholder = true;
+
         setText(getPlaceholder());
         setCaretPosition(0);
         setSelectionColor(new Color(1, 1, 1, 0));
         setForeground(Color.GRAY);
     }
-    
+
     private void hidePlaceholder() {
         setText("");
         setSelectionColor(selectionColor);
         setForeground(textColor);
+        isShowingPlaceholder = false;
     }
-    
-    private boolean isPlaceholder() {
-        return getText().equals(getPlaceholder());
+
+    @Override
+    public String getText() {
+        if (isShowingPlaceholder)
+            return "";
+
+        return super.getText();
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         boolean isBackspace = (int)e.getKeyChar() == 8;
 
-        if (isPlaceholder() && !e.isActionKey() && !isBackspace)
+        if (isShowingPlaceholder && !e.isActionKey() && !isBackspace)
             hidePlaceholder();
         else if (getText().length() == 0)
             showPlaceholder();
@@ -129,9 +139,9 @@ public class ExtTextField extends JTextField implements KeyListener, CaretListen
 
     @Override
     public void caretUpdate(CaretEvent e) {
-        
+
         // Force caret to position 0 if placeholder
-        if (isPlaceholder() && e.getDot() > 0)
+        if (isShowingPlaceholder && e.getDot() > 0)
             setCaretPosition(0);
     }
 
